@@ -87,7 +87,7 @@ public class RandomPlay {
 		
 		for(int i=0;i<1024;i++) {
 			red.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
-			green.addAll(getRandomNumber(16,0,255, 1, 10, "new", "plain"));
+			green.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
 			blue.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
 		}
 	
