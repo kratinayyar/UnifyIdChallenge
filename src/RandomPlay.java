@@ -85,10 +85,11 @@ public class RandomPlay {
 		ArrayList<Integer> green = new ArrayList();
 		ArrayList<Integer> blue = new ArrayList();
 		
-		for(int i=0;i<1024;i++) {
-			red.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
-			green.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
-			blue.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
+		for(int i=0;i<32;i++) {
+			red.addAll(this.getRandomNumber(512,0,255, 1, 10, "new", "plain"));
+			green.addAll(this.getRandomNumber(512,0,255, 1, 10, "new", "plain"));
+			blue.addAll(this.getRandomNumber(512,0,255, 1, 10, "new", "plain"));
+			
 		}
 	
 		System.out.println("Bitmap picture");
