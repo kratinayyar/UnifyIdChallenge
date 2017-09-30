@@ -1,4 +1,8 @@
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,8 +11,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class RandomPlay {
+import javax.imageio.ImageIO;
 
+public class RandomPlay {
+	
+
+	
 	public static void main(String[] args) throws IOException {
 		
 		RandomPlay randomPlay=new RandomPlay();
@@ -32,17 +40,26 @@ public class RandomPlay {
 			System.out.println("\nEnter the base of random integer:");
 			base=in.nextInt();			
 			
-			randomPlay.getRandomNumber(num, min, max, col, base, rnd, format);
+			ArrayList<Integer> response = randomPlay.getRandomNumber(num, min, max, col, base, rnd, format);
+			
+						
+			System.out.println("Random Integers :\n");
+			for(int i=0;i<response.size();i++) {
+			System.out.println(response.get(i)+"\n");
+			}
 		}
 		else if(op==2) {
 			randomPlay.getBitmapPicture();
+		}
+		else {
+			System.out.println("Exiting: Please enter correct code!");
 		}
 		
 		
 		
 	}
 	
-	public void getRandomNumber(int num, int min, int max, int col, int base, String rnd, String format) throws IOException {
+	public ArrayList<Integer> getRandomNumber(int num, int min, int max, int col, int base, String rnd, String format) throws IOException {
 		String baseUrl = "https://www.random.org/integers";
 		String url = String.format("%s/?num=%d&min=%d&max=%d&col=%d&base=%d&rnd=%s&format=%s", baseUrl, num, min, max, col, base, rnd, format);
 		
@@ -50,7 +67,7 @@ public class RandomPlay {
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		
 		con.setRequestMethod("GET");
-		con.setReadTimeout(60000);
+		con.setReadTimeout(120000);
 
 		int responseCode = con.getResponseCode();
 		
@@ -58,20 +75,50 @@ public class RandomPlay {
 			System.out.println("API returned error response. Please try again!");
 		}
 		ArrayList<Integer> response = readStream(con.getInputStream());
+
+		return response;
+	}
+	
+	
+	public void getBitmapPicture() throws IOException {
+		ArrayList<Integer> red = new ArrayList();
+		ArrayList<Integer> green = new ArrayList();
+		ArrayList<Integer> blue = new ArrayList();
 		
-		
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		
-		System.out.println("Random Integers :\n");
-		for(int i=0;i<response.size();i++) {
-		System.out.println(response.get(i)+"\n");
+		for(int i=0;i<1024;i++) {
+			red.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
+			green.addAll(getRandomNumber(16,0,255, 1, 10, "new", "plain"));
+			blue.addAll(this.getRandomNumber(16,0,255, 1, 10, "new", "plain"));
 		}
-	}
 	
-	
-	public void getBitmapPicture() {
 		System.out.println("Bitmap picture");
+		BufferedImage img = map( 128, 128, red, green, blue);
+        savePNG( img, "./test.bmp" );
 	}
+	
+	private static BufferedImage map( int sizeX, int sizeY,ArrayList<Integer> red ,ArrayList<Integer> green ,ArrayList<Integer> blue  ){
+        final BufferedImage res = new BufferedImage( sizeX, sizeY, BufferedImage.TYPE_INT_RGB );
+        for (int x = 0; x < sizeX; x++){
+            for (int y = 0; y < sizeY; y++){
+            	
+                res.setRGB(x, y, new Color(red.get(x*128 + y), green.get(x*128 + y), blue.get(x*128 + y)).getRGB() );
+            }
+        }
+        return res;
+    }
+
+	
+	private static void savePNG( final BufferedImage bi, final String path ){
+        try {
+            RenderedImage rendImage = bi;
+            ImageIO.write(rendImage, "bmp", new File(path));
+            //ImageIO.write(rendImage, "PNG", new File(path));
+            //ImageIO.write(rendImage, "jpeg", new File(path));
+        } catch ( IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
 	
 	
     private static ArrayList<Integer> readStream(InputStream in) {
